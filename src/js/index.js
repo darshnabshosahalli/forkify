@@ -2,6 +2,7 @@ import Search from './models/Search';
 import * as searchView from './views/SearchView';
 import {elements, renderLoader,clearLoader} from './views/base';
 import Recipe from './models/Recipe';
+import * as recipieView from './views/RecipieView';
 
 /* global state of the app
 * - Search object
@@ -58,19 +59,25 @@ const getRecipe = async () => {
     let id = window.location.hash.split('#')[1];
 
     if(id) {
-        console.log(id);
         // create a recipe object
         state.recipe = new Recipe(id);
+
+        recipieView.clearRecipie();
+        renderLoader(elements.recipeBox);
 
         // get the recipe data
         try {
             await state.recipe.getRecipe();
-        
+            
             state.recipe.calcTime();
             state.recipe.servings();
             
             // render the recipe on ui
-            console.log(state.recipe);
+            state.recipe.parseIngredients();
+            clearLoader();
+
+            recipieView.renderRecipie(state.recipe);
+            recipieView.highlightSelector(id);
 
         } catch(error) {
             alert(`error processing recipe ${error}`);
@@ -80,7 +87,18 @@ const getRecipe = async () => {
 
 }
 
-
-
 window.addEventListener('hashchange', getRecipe);
 window.addEventListener('load', getRecipe);
+
+elements.recipeBox.addEventListener('click',el => {
+
+    if(el.target.matches('.btn-decrease')) {
+        if(state.recipe.servings > 1) {
+            state.recipe.updateServings('dec');
+        }
+    }else if(el.target.matches('.btn-increase')){
+        state.recipe.updateServings('inc');
+    }
+
+    recipieView.updateRecipe(state.recipe);
+});

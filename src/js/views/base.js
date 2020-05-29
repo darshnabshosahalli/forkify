@@ -3,7 +3,8 @@ export const elements = {
     searchButton: document.getElementById('searchBtn'),
     sideDisplayList: document.getElementById('side-list'),
     searchTab: document.getElementById('result-tab'),
-    paginationButton: document.getElementById('pagination')
+    paginationButton: document.getElementById('pagination'),
+    recipeBox: document.getElementById('recipe-box'),
 }
 
 export const queryStrings = {
